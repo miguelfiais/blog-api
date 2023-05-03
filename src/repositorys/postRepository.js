@@ -14,6 +14,7 @@ export const updatePost = async (data) => {
     data: {
       title: data.title,
       content: data.content,
+      image: data.image,
     },
   });
 };

@@ -19,7 +19,12 @@ export const store = async (req, res) => {
     }
     const userId = req.userId;
     const { title, content } = req.body;
-    const post = await createPost({ userId, title, content });
+
+    let image;
+    if (req.file) {
+      image = req.file.filename;
+    }
+    const post = await createPost({ userId, title, content, image });
     return res.status(201).json(post);
   } catch (error) {
     return res.status(400).json({ error });
@@ -51,8 +56,13 @@ export const update = async (req, res) => {
       return res.status(409).json({ error: "You cannot change this post" });
     }
 
+    let image;
+    if (req.file) {
+      image = req.file.filename;
+    }
+
     const { title, content } = req.body;
-    const newPost = await updatePost({ id, title, content });
+    const newPost = await updatePost({ id, title, content, image });
 
     return res.status(200).json(newPost);
   } catch (error) {
