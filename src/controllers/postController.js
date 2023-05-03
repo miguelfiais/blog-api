@@ -1,5 +1,14 @@
-import { createPost, getPosts } from "../repositorys/postRepository";
-import { postValidation } from "../validations/postValidations";
+import {
+  createPost,
+  deletePost,
+  findPost,
+  getPosts,
+  updatePost,
+} from "../repositorys/postRepository";
+import {
+  postValidation,
+  updatePostValidation,
+} from "../validations/postValidations";
 
 export const store = async (req, res) => {
   try {
@@ -21,6 +30,49 @@ export const index = async (req, res) => {
   try {
     const posts = await getPosts();
     return res.status(200).json(posts);
+  } catch (error) {
+    return res.status(400).json({ error });
+  }
+};
+
+export const update = async (req, res) => {
+  try {
+    try {
+      await updatePostValidation.validateSync(req.body, { abortEarly: false });
+    } catch (err) {
+      return res.status(400).json({ error: err.errors });
+    }
+
+    const { id } = req.params;
+    const userId = req.userId;
+
+    const post = await findPost(id);
+    if (userId !== post.userId) {
+      return res.status(409).json({ error: "You cannot change this post" });
+    }
+
+    const { title, content } = req.body;
+    const newPost = await updatePost({ id, title, content });
+
+    return res.status(200).json(newPost);
+  } catch (error) {
+    return res.status(400).json({ error });
+  }
+};
+
+export const destroy = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.userId;
+
+    const post = await findPost(id);
+    if (userId !== post.userId) {
+      return res.status(409).json({ error: "You cannot delete this post" });
+    }
+
+    await deletePost(id);
+
+    return res.status(200).json();
   } catch (error) {
     return res.status(400).json({ error });
   }
