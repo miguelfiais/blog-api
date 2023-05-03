@@ -29,7 +29,7 @@ export const store = async (req, res) => {
       id: user.id,
       name: user.name,
       email: user.email,
-      avatar: user.avatar,
+      avatar: `http://localhost:3001/image/${user.avatar}`,
       token: jwt.sign({ id: user.id }, "32781ed9b4264f84e6a6c87e7327abc2", {
         expiresIn: "5d",
       }),

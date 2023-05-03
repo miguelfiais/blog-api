@@ -11,7 +11,7 @@ export const store = async (req, res) => {
     }
 
     const { name, email, password } = req.body;
-
+    const { filename: avatar } = req.file;
     const userExist = await findUser(email);
     if (userExist) {
       return res.status(409).json({ error: "Email already exists" });
@@ -23,6 +23,7 @@ export const store = async (req, res) => {
       name,
       email,
       password: hashPassword,
+      avatar,
     });
 
     return res.status(201).json(user);
