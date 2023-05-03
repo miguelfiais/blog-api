@@ -11,7 +11,11 @@ export const store = async (req, res) => {
     }
 
     const { name, email, password } = req.body;
-    const { filename: avatar } = req.file;
+
+    let avatar;
+    if (req.file) {
+      avatar = req.file.filename;
+    }
     const userExist = await findUser(email);
     if (userExist) {
       return res.status(409).json({ error: "Email already exists" });
